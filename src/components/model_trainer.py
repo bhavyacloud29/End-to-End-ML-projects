@@ -38,17 +38,53 @@ class ModelTrainer:
 
             models={
                 "Linear Regression":LinearRegression(),
-                "lasso":Lasso(),
+                "Lasso":Lasso(),
                 "Ridge":Ridge(),
                 "Random Forest":RandomForestRegressor(),
-                 "AdaBoost":AdaBoostRegressor(),
+                "AdaBoost":AdaBoostRegressor(),
                 "Gradient Boosting":GradientBoostingRegressor(),
 
                 "XGBoost":XGBRegressor(verbose=0),
                 "Support Vector Regressor":SVR(),
                 "Decision Tree":DecisionTreeRegressor()
 }
-            model_report:dict=evaluate_models(X_train=X_train,y_train=y_train,X_test=X_test,y_test=y_test,models=models)
+            params={
+                "Decision Tree":{
+                    'criterion':['squared_error','friedman_mse','absolute_error','poisson']
+                },
+                "Random Forest":{
+                    'n_estimators':[8,16,32,64,128,256]
+                },
+                "AdaBoost":{
+                    'n_estimators':[8,16,32,64,128,256]
+                },
+                "Gradient Boosting":{
+                    'n_estimators':[8,16,32,64,128,256],
+                    'learning_rate':[.1,.01,.05,.001],
+                    'subsample':[0.6,0.7,0.75,0.8,0.85,0.9]
+                },
+                "XGBoost":{
+                    'n_estimators':[8,16,32,64,128,256],
+                    'learning_rate':[.1,.01,.05,.001]
+                },
+                 "Support Vector Regressor":{
+                     'kernel':['linear','rbf','poly'],
+                     'C':[0.1,0.5,1,5,10],
+                     'gamma':['scale','auto']
+                 },
+                    "Lasso":{
+                        'alpha':[0.1,0.01,0.05,0.001],
+                        'selection':['cyclic','random']
+                    },
+                    "Ridge":{
+                        'alpha':[0.1,0.01,0.05,0.001],
+                        'solver':['svd','cholesky','lsqr','sparse_cg','sag','saga']
+                    },
+                    "Linear Regression":{}
+
+
+            }
+            model_report:dict=evaluate_models(X_train=X_train,y_train=y_train,X_test=X_test,y_test=y_test,models=models,params=params)
 
             best_model_score=max(sorted(model_report.values()))
             # To get the best model name from dict
@@ -58,7 +94,7 @@ class ModelTrainer:
             best_model=models[best_model_name]
 
             if best_model_score<0.6:
-                raise CustomException("No best model Found")
+                raise CustomException("No best model Found",sys)
             logging.info("Best found model on both training and testing dataset")
             
             save_object(
