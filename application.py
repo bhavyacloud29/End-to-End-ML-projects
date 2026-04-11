@@ -14,8 +14,8 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 
 
-app = Flask(__name__)
-
+application = Flask(__name__)
+app=application
 # Route for a home page
 @app.route('/')
 def home():
@@ -47,7 +47,7 @@ def predict_datapoint():
         
 
 if __name__=="__main__":
-     app.run(debug=True)
+     app.run()
 
 
 
